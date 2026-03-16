@@ -4,33 +4,85 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin — The Symbol φ Studio</title>
-  <!-- Prevent search engines from indexing the admin panel -->
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='serif'>φ</text></svg>">
   <link rel="stylesheet" href="../css/style.css">
+
+  <style>
+    /* Loading screen */
+    #screen-loading {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+    #screen-loading .spin {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 64px;
+      font-style: italic;
+      color: var(--accent);
+      animation: rotate 2s linear infinite;
+      display: inline-block;
+    }
+    #screen-loading p {
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    @keyframes rotate {
+      0%   { transform: rotate(0deg);   }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Error screen */
+    #screen-error {
+      display: none;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+      padding: 40px;
+      text-align: center;
+    }
+    #screen-error .err-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      font-weight: 300;
+    }
+    #screen-error .err-msg {
+      color: var(--text-muted);
+      max-width: 480px;
+      font-size: 14px;
+    }
+    #screen-error code {
+      background: var(--bg-alt);
+      padding: 2px 8px;
+      font-size: 13px;
+    }
+  </style>
 </head>
 <body class="admin-wrap">
 
-  <!-- ══════════════════════════════════
-       SETUP WARNING (shown if not configured)
-       ══════════════════════════════════ -->
-  <div id="setup-warning" style="display:none;
-    min-height:100vh; align-items:center; justify-content:center;
-    flex-direction:column; gap:24px; padding:40px; text-align:center;">
-    <span style="font-family:'Cormorant Garamond',serif;font-size:72px;font-style:italic;color:var(--accent)">φ</span>
-    <h2 style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300">Setup Required</h2>
-    <p style="color:var(--text-muted);max-width:440px">
-      Please open <code style="background:var(--bg-alt);padding:2px 8px">js/config.js</code>
-      and fill in your Supabase and Cloudinary credentials.<br><br>
-      See <strong>SETUP.md</strong> in the project folder for step-by-step instructions.
-    </p>
-    <a href="../index.html" style="color:var(--accent);font-size:13px">← Back to site</a>
+  <!-- ── Loading ── -->
+  <div id="screen-loading">
+    <span class="spin">φ</span>
+    <p>Loading…</p>
   </div>
 
-  <!-- ══════════════════════════════════
-       LOGIN PANEL
-       ══════════════════════════════════ -->
-  <div id="login" style="display:none;">
+  <!-- ── Error ── -->
+  <div id="screen-error">
+    <span style="font-family:'Cormorant Garamond',serif;font-size:64px;font-style:italic;color:var(--accent)">φ</span>
+    <p class="err-title" id="errTitle">Something went wrong</p>
+    <p class="err-msg" id="errMsg"></p>
+    <a href="../index.html" style="color:var(--accent);font-size:13px;margin-top:8px">← Back to site</a>
+  </div>
+
+  <!-- ── Login ── -->
+  <div id="screen-login" style="display:none">
     <div class="admin-login">
       <div class="login-card">
         <span class="login-logo">φ</span>
@@ -56,12 +108,9 @@
     </div>
   </div>
 
-  <!-- ══════════════════════════════════
-       DASHBOARD
-       ══════════════════════════════════ -->
-  <div id="dashboard" style="display:none">
+  <!-- ── Dashboard ── -->
+  <div id="screen-dashboard" style="display:none">
 
-    <!-- Header -->
     <header class="admin-header">
       <span class="admin-header-logo">φ Studio Admin</span>
       <div class="admin-header-right">
@@ -71,16 +120,12 @@
       </div>
     </header>
 
-    <!-- Main content -->
     <main class="admin-main">
       <div class="admin-top">
         <h1>Portfolio</h1>
-        <button class="btn btn-dark" onclick="openModal()">
-          + Add New Work
-        </button>
+        <button class="btn btn-dark" onclick="openModal()">+ Add New Work</button>
       </div>
 
-      <!-- Items table -->
       <div style="overflow-x:auto">
         <table class="items-table">
           <thead>
@@ -94,32 +139,24 @@
             </tr>
           </thead>
           <tbody id="itemsBody">
-            <tr>
-              <td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted)">
-                Loading…
-              </td>
-            </tr>
+            <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted)">Loading…</td></tr>
           </tbody>
         </table>
       </div>
 
       <p style="margin-top:24px;font-size:12px;color:var(--text-muted)">
-        ★ Star an item to feature it on the homepage. Only starred items appear in the "Recent Stories" section.
+        ★ Star an item to feature it on the homepage.
       </p>
     </main>
   </div>
 
-  <!-- ══════════════════════════════════
-       ADD WORK MODAL
-       ══════════════════════════════════ -->
-  <div class="modal" id="addModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <!-- ── Add Work Modal ── -->
+  <div class="modal" id="addModal">
     <div class="modal-box">
-      <button class="modal-close" onclick="closeModal()" aria-label="Close">×</button>
-      <h2 class="modal-title" id="modalTitle">Add New Work</h2>
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <h2 class="modal-title">Add New Work</h2>
 
       <form id="addForm" novalidate>
-
-        <!-- Upload zone -->
         <div class="upload-zone" id="uploadZone">
           <input type="file" id="fileInput" accept="image/*,video/*">
           <span class="upload-icon">↑</span>
@@ -130,18 +167,14 @@
           <p class="upload-filename" id="uploadFilename"></p>
         </div>
 
-        <!-- Progress bar -->
         <div class="upload-progress" id="uploadProgress">
-          <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
-          </div>
+          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
           <p class="progress-text" id="progressText"></p>
         </div>
 
-        <!-- Form fields -->
         <div class="form-group">
           <label for="itemTitle">Title *</label>
-          <input type="text" id="itemTitle" placeholder="e.g. Sarah &amp; James — Summer Wedding" required>
+          <input type="text" id="itemTitle" placeholder="e.g. Sarah & James — Summer Wedding" required>
         </div>
 
         <div class="form-group">
@@ -159,14 +192,12 @@
             <option value="image">Image</option>
             <option value="video">Video</option>
           </select>
-          <p style="font-size:12px;color:var(--text-muted);margin-top:6px">
-            Auto-detected from the file you upload.
-          </p>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:6px">Auto-detected from your file.</p>
         </div>
 
         <div class="form-group">
           <label for="itemDescription">Description <span style="color:var(--text-muted)">(optional)</span></label>
-          <textarea id="itemDescription" placeholder="A short description of this work…"></textarea>
+          <textarea id="itemDescription" placeholder="A short description…"></textarea>
         </div>
 
         <button type="submit" class="btn btn-dark btn-full">Publish Work</button>
