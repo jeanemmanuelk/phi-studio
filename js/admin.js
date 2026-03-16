@@ -26,9 +26,9 @@ function showError(title, msg) {
 }
 
 /* ---- Boot ---- */
-window.addEventListener('load', async () => {
+window.addEventListener('DOMContentLoaded', async () => {
   // 1. Check config
-  if (!window.CONFIG || CONFIG.supabase.url === 'YOUR_SUPABASE_URL') {
+  if (typeof CONFIG === 'undefined' || CONFIG.supabase.url === 'YOUR_SUPABASE_URL') {
     showError(
       'Setup Required',
       'Please open <code>js/config.js</code> and fill in your Supabase and Cloudinary details. See <strong>SETUP.md</strong> for instructions.'
@@ -53,9 +53,12 @@ window.addEventListener('load', async () => {
     return;
   }
 
-  // 4. Check session
+  // 4. Check session (with timeout to prevent infinite spinner)
   try {
-    const { data, error } = await db.auth.getSession();
+    const timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Connection timed out. Check your internet connection and refresh.')), 15000)
+    );
+    const { data, error } = await Promise.race([db.auth.getSession(), timeout]);
     if (error) throw error;
 
     if (data.session) {
