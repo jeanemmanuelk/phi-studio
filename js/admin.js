@@ -74,9 +74,14 @@ async function signOut() {
 
 /* ---- Panel switching ---- */
 function showPanel(name) {
-  ['login', 'dashboard', 'setup-warning'].forEach(id => {
+  const displayMap = {
+    'login':         'block',
+    'dashboard':     'block',
+    'setup-warning': 'flex'
+  };
+  Object.keys(displayMap).forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.style.display = id === name ? '' : 'none';
+    if (el) el.style.display = id === name ? displayMap[id] : 'none';
   });
 }
 
