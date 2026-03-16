@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Symbol φ Studio — Larissa Mendy</title>
+  <meta name="description" content="Cinematic wedding films, event coverage, and photography by Larissa Mendy. The Symbol Phi Studio.">
+  <meta property="og:title" content="The Symbol φ Studio — Larissa Mendy">
+  <meta property="og:description" content="Cinematic wedding films, event coverage, and photography.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='serif'>φ</text></svg>">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ── Navigation ── -->
+  <nav class="nav" id="nav">
+    <a href="index.html" class="nav-logo">φ</a>
+    <ul class="nav-links">
+      <li><a href="portfolio.html">Work</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile nav overlay -->
+  <div class="nav-mobile" id="navMobile" role="dialog" aria-modal="true">
+    <span class="nav-mobile-close" id="navClose" role="button" tabindex="0">×</span>
+    <a href="portfolio.html">Work</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow">Visual Storytelling</div>
+
+      <h1 class="hero-title">
+        The<br>
+        Symbol<br>
+        <span class="phi">φ</span> Studio
+      </h1>
+
+      <p class="hero-name">Larissa Mendy</p>
+      <div class="hero-divider"></div>
+
+      <div class="hero-categories">
+        <span>Weddings</span>
+        <span>Events</span>
+        <span>Photography</span>
+      </div>
+
+      <a href="portfolio.html" class="btn btn-dark">
+        View Portfolio
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+          <path d="M1 12L12 1M12 1H5M12 1V8"/>
+        </svg>
+      </a>
+    </div>
+
+    <div class="hero-media" id="heroMedia">
+      <div class="hero-placeholder">
+        <span class="phi-watermark">φ</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Selected Work ── -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div>
+          <p class="section-label">Selected Work</p>
+          <h2 class="section-title">Recent Stories</h2>
+        </div>
+        <a href="portfolio.html" class="btn btn-outline">
+          All Work
+          <svg width="12" height="12" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+            <path d="M1 12L12 1M12 1H5M12 1V8"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="featured-grid" id="featuredGrid">
+        <!-- Placeholders shown until work is added -->
+        <div class="featured-item"><div class="featured-placeholder">φ</div></div>
+        <div class="featured-item"><div class="featured-placeholder">φ</div></div>
+        <div class="featured-item"><div class="featured-placeholder">φ</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Services Strip ── -->
+  <div class="services-strip">
+    <div class="container">
+      <div class="services-grid">
+        <div class="service-card reveal">
+          <span class="service-num">01</span>
+          <p class="service-name">Weddings</p>
+          <p class="service-desc">Capturing the most precious day of your life with cinematic elegance.</p>
+        </div>
+        <div class="service-card reveal reveal-delay-1">
+          <span class="service-num">02</span>
+          <p class="service-name">Events</p>
+          <p class="service-desc">From corporate galas to intimate gatherings — every detail, beautifully preserved.</p>
+        </div>
+        <div class="service-card reveal reveal-delay-2">
+          <span class="service-num">03</span>
+          <p class="service-name">Photography</p>
+          <p class="service-desc">Still frames that carry a lifetime of emotion and quiet meaning.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-logo">φ</span>
+        <span class="footer-copy">© 2024 The Symbol φ Studio · Larissa Mendy</span>
+        <a href="https://instagram.com/thephi.studio" target="_blank" rel="noopener" class="footer-ig">
+          @thephi.studio
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── Scripts ── -->
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>
+    // Load featured items for the home page grid
+    (async function () {
+      if (!window.CONFIG?.supabase?.url || CONFIG.supabase.url === 'YOUR_SUPABASE_URL') return;
+
+      const { createClient } = supabase;
+      const db = createClient(CONFIG.supabase.url, CONFIG.supabase.anonKey);
+
+      const { data } = await db
+        .from('portfolio_items')
+        .select('*')
+        .eq('is_featured', true)
+        .order('created_at', { ascending: false })
+        .limit(3);
+
+      if (!data?.length) return;
+
+      const grid = document.getElementById('featuredGrid');
+      grid.innerHTML = data.map(item => {
+        const thumb = item.media_type === 'video'
+          ? (item.thumbnail_url || item.cloudinary_url.replace('/video/upload/', '/video/upload/so_1,w_800,c_fill,ar_3:4/').replace(/\.(mp4|mov|webm)$/i, '.jpg'))
+          : item.cloudinary_url.replace('/image/upload/', '/image/upload/w_800,c_fill/');
+
+        return `
+          <div class="featured-item" onclick="window.location='portfolio.html'">
+            <img src="${thumb}" alt="${item.title}" loading="lazy">
+            <div class="featured-overlay">
+              <div>
+                <p class="ov-cat">${item.category}</p>
+                <p class="ov-title">${item.title}</p>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    })();
+  </script>
+</body>
+</html>

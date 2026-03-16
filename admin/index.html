@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — The Symbol φ Studio</title>
+  <!-- Prevent search engines from indexing the admin panel -->
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='serif'>φ</text></svg>">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="admin-wrap">
+
+  <!-- ══════════════════════════════════
+       SETUP WARNING (shown if not configured)
+       ══════════════════════════════════ -->
+  <div id="setup-warning" style="display:none;
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    flex-direction:column; gap:24px; padding:40px; text-align:center;">
+    <span style="font-family:'Cormorant Garamond',serif;font-size:72px;font-style:italic;color:var(--accent)">φ</span>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300">Setup Required</h2>
+    <p style="color:var(--text-muted);max-width:440px">
+      Please open <code style="background:var(--bg-alt);padding:2px 8px">js/config.js</code>
+      and fill in your Supabase and Cloudinary credentials.<br><br>
+      See <strong>SETUP.md</strong> in the project folder for step-by-step instructions.
+    </p>
+    <a href="../index.html" style="color:var(--accent);font-size:13px">← Back to site</a>
+  </div>
+
+  <!-- ══════════════════════════════════
+       LOGIN PANEL
+       ══════════════════════════════════ -->
+  <div id="login" style="display:none">
+    <div class="admin-login">
+      <div class="login-card">
+        <span class="login-logo">φ</span>
+        <p class="login-sub">Studio Admin</p>
+
+        <form id="loginForm" novalidate>
+          <div class="form-group">
+            <label for="loginEmail">Email</label>
+            <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+            <p class="form-error" id="loginError"></p>
+          </div>
+          <button type="submit" class="btn btn-dark btn-full">Sign In</button>
+        </form>
+
+        <p style="margin-top:24px;text-align:center">
+          <a href="../index.html" style="font-size:12px;color:var(--text-muted)">← Back to site</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       DASHBOARD
+       ══════════════════════════════════ -->
+  <div id="dashboard" style="display:none">
+
+    <!-- Header -->
+    <header class="admin-header">
+      <span class="admin-header-logo">φ Studio Admin</span>
+      <div class="admin-header-right">
+        <span class="admin-user" id="adminUser"></span>
+        <button class="btn btn-outline btn-sm" onclick="signOut()">Sign Out</button>
+        <a href="../index.html" class="btn btn-outline btn-sm" target="_blank">View Site ↗</a>
+      </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="admin-main">
+      <div class="admin-top">
+        <h1>Portfolio</h1>
+        <button class="btn btn-dark" onclick="openModal()">
+          + Add New Work
+        </button>
+      </div>
+
+      <!-- Items table -->
+      <div style="overflow-x:auto">
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Type</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="itemsBody">
+            <tr>
+              <td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted)">
+                Loading…
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="margin-top:24px;font-size:12px;color:var(--text-muted)">
+        ★ Star an item to feature it on the homepage. Only starred items appear in the "Recent Stories" section.
+      </p>
+    </main>
+  </div>
+
+  <!-- ══════════════════════════════════
+       ADD WORK MODAL
+       ══════════════════════════════════ -->
+  <div class="modal" id="addModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal()" aria-label="Close">×</button>
+      <h2 class="modal-title" id="modalTitle">Add New Work</h2>
+
+      <form id="addForm" novalidate>
+
+        <!-- Upload zone -->
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" id="fileInput" accept="image/*,video/*">
+          <span class="upload-icon">↑</span>
+          <p class="upload-hint">
+            <strong>Click to upload</strong> or drag &amp; drop<br>
+            <span style="font-size:12px">Images or Videos · Max 2GB</span>
+          </p>
+          <p class="upload-filename" id="uploadFilename"></p>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="upload-progress" id="uploadProgress">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <p class="progress-text" id="progressText"></p>
+        </div>
+
+        <!-- Form fields -->
+        <div class="form-group">
+          <label for="itemTitle">Title *</label>
+          <input type="text" id="itemTitle" placeholder="e.g. Sarah &amp; James — Summer Wedding" required>
+        </div>
+
+        <div class="form-group">
+          <label for="itemCategory">Category *</label>
+          <select id="itemCategory" required>
+            <option value="weddings">Weddings</option>
+            <option value="events">Events</option>
+            <option value="photography">Photography</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="mediaType">Media Type</label>
+          <select id="mediaType">
+            <option value="image">Image</option>
+            <option value="video">Video</option>
+          </select>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:6px">
+            Auto-detected from the file you upload.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label for="itemDescription">Description <span style="color:var(--text-muted)">(optional)</span></label>
+          <textarea id="itemDescription" placeholder="A short description of this work…"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-dark btn-full">Publish Work</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── Scripts ── -->
+  <script src="../js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio — The Symbol φ Studio</title>
+  <meta name="description" content="Wedding films, event coverage and photography by Larissa Mendy.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='serif'>φ</text></svg>">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ── Navigation ── -->
+  <nav class="nav" id="nav">
+    <a href="index.html" class="nav-logo">φ</a>
+    <ul class="nav-links">
+      <li><a href="portfolio.html">Work</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="nav-mobile" id="navMobile">
+    <span class="nav-mobile-close" id="navClose">×</span>
+    <a href="portfolio.html">Work</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <!-- ── Portfolio Page ── -->
+  <main class="portfolio-page">
+    <div class="container">
+
+      <!-- Header -->
+      <div class="portfolio-page-header">
+        <h1>Port<span class="phi">φ</span>lio</h1>
+        <p class="portfolio-page-sub">Weddings · Events · Photography</p>
+      </div>
+
+      <!-- Filter tabs -->
+      <div class="filters" id="filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="weddings">Weddings</button>
+        <button class="filter-btn" data-filter="events">Events</button>
+        <button class="filter-btn" data-filter="photography">Photography</button>
+      </div>
+
+      <!-- Grid -->
+      <div class="portfolio-grid" id="portfolioGrid">
+        <!-- Populated by portfolio.js -->
+        <div class="skeleton skeleton-h1"></div>
+        <div class="skeleton skeleton-h2"></div>
+        <div class="skeleton skeleton-h3"></div>
+        <div class="skeleton skeleton-h4"></div>
+        <div class="skeleton skeleton-h5"></div>
+        <div class="skeleton skeleton-h6"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── Lightbox ── -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+    <button class="lb-close" onclick="closeLightbox()" aria-label="Close">×</button>
+    <div class="lb-inner" id="lbInner"></div>
+    <div class="lb-info">
+      <p class="lb-cat" id="lbCat"></p>
+      <p class="lb-title" id="lbTitle"></p>
+    </div>
+  </div>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-logo">φ</span>
+        <span class="footer-copy">© 2024 The Symbol φ Studio · Larissa Mendy</span>
+        <a href="https://instagram.com/thephi.studio" target="_blank" rel="noopener" class="footer-ig">@thephi.studio</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── Scripts ── -->
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/portfolio.js"></script>
+</body>
+</html>
